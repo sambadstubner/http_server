@@ -6,8 +6,8 @@ import socket
 import sys
 import time
 
-from server_parser import ServerParser
 import responses
+from server_parser import ServerParser
 
 
 class Server:
@@ -99,11 +99,10 @@ class Server:
                 logging.debug(f"Sending chunk: \n{chunk}")
                 connection.send(chunk)
 
-
     @staticmethod
     def create_header(status_code, status_message, content_length):
         return f"""HTTP/1.0 {status_code} {status_message}
-Content-Length {content_length}
+Content-Length: {content_length}
 
 """
 
