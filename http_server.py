@@ -31,9 +31,13 @@ class Server:
             logging.info(f"Connection from: {address}")
 
             while True:
-                header = conn.recv(self.DEFAULT_BUFFER_SIZE)
-                if not header:
-                    logging.info("Client disconnected...")
+                try:
+                    header = conn.recv(self.DEFAULT_BUFFER_SIZE)
+                    if not header:
+                        logging.info("Client disconnected...")
+                        break
+                except:
+                    logging.info("Client disconnected")
                     break
 
                 if self.delay:
@@ -42,10 +46,12 @@ class Server:
 
                 action, resource = self.parse_header(header.decode())
                 logging.debug(f"Action: {action} Resource: {resource}")
+                try:
+                    self.send_response(conn, action, resource)
 
-                self.send_response(conn, action, resource)
-
-                logging.debug("Sent")
+                    logging.debug("Sent")
+                except:
+                    logging.info("Client disconnected")
                 break
 
             conn.close()
