@@ -1,15 +1,15 @@
 def get_method_not_allowed():
-        return """HTTP/1.0 400 Bad Request
+        return """HTTP/1.0 405 Method Not Allowed
 Content-Type: text/html
 Content-Length: 174
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>400 Bad Request</title>
+    <title>405 Method Not Allowed</title>
 </head>
 <body>
-    <h1>400 Bad Request</h1>
+    <h1>405 Method Not Allowed</h1>
     <p>Your request is malformed or invalid.</p>
 </body>
 </html>
