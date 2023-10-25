@@ -32,7 +32,10 @@ class Server:
 
             while True:
                 try:
-                    header = conn.recv(self.DEFAULT_BUFFER_SIZE)
+                    header = conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
+                    while(header.find("\r\n\r\n") == -1):
+                        header += conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
+
                     if not header:
                         logging.info("Client disconnected...")
                         break
@@ -44,7 +47,7 @@ class Server:
                     logging.debug(f"Delaying {self.DEFAULT_DELAY_TIME} seconds")
                     time.sleep(self.DEFAULT_DELAY_TIME)
 
-                action, resource = self.parse_header(header.decode())
+                action, resource = self.parse_header(header)
                 logging.debug(f"Action: {action} Resource: {resource}")
                 try:
                     self.send_response(conn, action, resource)
