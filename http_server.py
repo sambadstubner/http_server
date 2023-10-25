@@ -27,8 +27,13 @@ class Server:
         self.server_socket.listen()
 
         while True:
-            conn, address = self.server_socket.accept()
-            logging.info(f"Connection from: {address}")
+            try:
+                conn, address = self.server_socket.accept()
+                logging.info(f"Connection from: {address}")
+
+            except:
+                logging.info("Shutting down")
+                break
 
             while True:
                 try:
