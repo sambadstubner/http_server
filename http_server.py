@@ -33,12 +33,13 @@ class Server:
             while True:
                 try:
                     header = conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
-                    while(header.find("\r\n\r\n") == -1):
-                        header += conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
-
                     if not header:
                         logging.info("Client disconnected...")
                         break
+
+                    while(header.find("\r\n\r\n") == -1):
+                        header += conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
+
                 except:
                     logging.info("Client disconnected")
                     break
