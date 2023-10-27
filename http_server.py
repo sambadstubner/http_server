@@ -37,13 +37,13 @@ class Server:
 
             while True:
                 try:
-                    header = conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
-                    if not header:
+                    request = conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
+                    if not request:
                         logging.info("Client disconnected...")
                         break
 
-                    while(header.find("\r\n\r\n") == -1):
-                        header += conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
+                    while request.find("\r\n\r\n") == -1:
+                        request += conn.recv(self.DEFAULT_BUFFER_SIZE).decode()
 
                 except:
                     logging.info("Client disconnected")
@@ -53,7 +53,7 @@ class Server:
                     logging.debug(f"Delaying {self.DEFAULT_DELAY_TIME} seconds")
                     time.sleep(self.DEFAULT_DELAY_TIME)
 
-                action, resource = self.parse_header(header)
+                action, resource = self.parse_request(request)
                 logging.debug(f"Action: {action} Resource: {resource}")
                 try:
                     self.send_response(conn, action, resource)
@@ -66,22 +66,22 @@ class Server:
             conn.close()
 
     @staticmethod
-    def parse_header(header: str) -> (str, str):
-        logging.debug(f"Header: \n{header}")
-        action = Server.get_action_from_header(header)
-        resource = Server.get_resource_from_header(header)
+    def parse_request(request: str) -> (str, str):
+        logging.debug(f"Header: \n{request}")
+        action = Server.get_action_from_request(request)
+        resource = Server.get_resource_from_request(request)
         return action, resource
 
     @staticmethod
-    def get_action_from_header(header):
-        space_index = header.index(" ")
-        return header[:space_index]
+    def get_action_from_request(request):
+        space_index = request.index(" ")
+        return request[:space_index]
 
     @staticmethod
-    def get_resource_from_header(header):
-        before_resource = header.index(" ")
-        after_resource = header.index(" ", before_resource + 1)
-        return header[before_resource + 1 : after_resource]
+    def get_resource_from_request(request):
+        before_resource = request.index(" ")
+        after_resource = request.index(" ", before_resource + 1)
+        return request[before_resource + 1 : after_resource]
 
     def send_response(self, connection: socket, action: int, resource: str) -> int:
         logging.debug(f"Full resource path: {self.root + resource}")
